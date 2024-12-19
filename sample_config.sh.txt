@@ -3,4 +3,5 @@ export PVT_KEY="$HOME/.ssh/{pvt_key_name}"
 export PUB_KEY="$HOME/.ssh/{pub_key_name}"
 export DIGITALOCEAN_SSH_KEY="{name_of_ssh_key_used_in_digital_ocean}"
 export DO_PAT="{your_personal_access_token}"
-export TF_LOG="TRACE"
+export TF_LOG="INFO"
+export ANSIBLE_HOST_KEY_CHECKING=False

@@ -27,9 +27,17 @@ cd terraform
 ```
 
 ### Configuration of terraform for digital ocean
+- Run ``terraform get` to download and update modules mentioned in root module.
+```sh
+terraform get --update=true
+```
 - Initialise terraform
 ```sh
 terraform init
+```
+- OPTIONAL: Run `terraform providers` to show information about the providers requirements of the configuration in the current working directory
+```sh
+terraform providers
 ```
 
 - Update the size of droplet in the file `vm-my-rides.tf` based on the [digital ocean size slug chart](https://slugs.do-api.dev/). Currently set as `s-4vcpu-8gb` which is the Basic Regular (Disk type: SSD, 8GB memory, 4 CPUs, 160GB SSD Disk, 5TB transfer at $0.071/hour or $48/ month at the time of creating this project)
@@ -88,5 +96,21 @@ Unset configurations
 source unset_config.sh
 ```
 
+#### Running ansible
+The ansible playbook is run by terraform in the `vm-my-rides.tf` file, under `provisioner "local-exec"`.
+To run ansible separate from terraform, you will have to run
+```sh
+ansible-playbook -u root -i "{ipv4_address}," --private-key ${PVT_KEY} -e "pub_key=${PUB_KEY}" docker-install.yml
+```
+`{ipv4_address}` should be replaced by the IPv4 address of the running droplet. Take note that the comma after the IP address has to remain present The other option is to add the IPv4 address to the inventory file and run
+```sh
+ansible-playbook -u root -i inventory --private-key ${PVT_KEY} -e "pub_key=${PUB_KEY}" docker-install.yml
+```
 
 
+SOURCES:
+[How to use terraform with digital ocean](https://www.digitalocean.com/community/tutorials/how-to-use-terraform-with-digitalocean)
+[How to create reusable infrastructure with terraform modules and templates](https://www.digitalocean.com/community/tutorials/how-to-create-reusable-infrastructure-with-terraform-modules-and-templates)
+[How to use ansible with terraform for configuration management](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-with-terraform-for-configuration-management)
+[How to use ansible to install and set up docker](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04)
+[]

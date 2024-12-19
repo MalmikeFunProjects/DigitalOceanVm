@@ -4,7 +4,7 @@
   vars:
     container_count: 2
     default_container_name: docker
-    default_container_command: sleep 1
+    default_container_command: sleep 1d
     default_container_image: ubuntu
 
   tasks:
@@ -70,10 +70,6 @@
     - name: Wait for apt to unlock
       become: yes
       shell: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 5; done;
-
-    - name: Install Docker Module for python3-pip
-      pip:
-        name: docker
 
     - name: Pull default Docker image
       community.docker.docker_image:
