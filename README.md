@@ -108,9 +108,12 @@ ansible-playbook -u root -i inventory --private-key ${PVT_KEY} -e "pub_key=${PUB
 ```
 
 
-SOURCES:
+### SOURCES:
 [How to use terraform with digital ocean](https://www.digitalocean.com/community/tutorials/how-to-use-terraform-with-digitalocean)
+
 [How to create reusable infrastructure with terraform modules and templates](https://www.digitalocean.com/community/tutorials/how-to-create-reusable-infrastructure-with-terraform-modules-and-templates)
+
 [How to use ansible with terraform for configuration management](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-with-terraform-for-configuration-management)
+
 [How to use ansible to install and set up docker](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04)
-[]
+
