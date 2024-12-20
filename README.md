@@ -21,9 +21,13 @@ cp sample_config.sh.txt config.sh && chmod +x $_ && chmod +x unset_config.sh
 - Set `TF_LOG` environment to any one of the valid levels [TRACE DEBUG INFO WARN ERROR OFF](https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels). It's currently set to TRACE to enable detailed logging of everything terraform is trying to do.
 
 #### Run the config script
+Before setting the configurations, run the command below to unset any conflicting configurations
+```sh
+source unset_config.sh
+```
+Set the configurations
 ```sh
 source config.sh
-cd terraform
 ```
 
 ### Configuration of terraform for digital ocean
@@ -100,12 +104,21 @@ source unset_config.sh
 The ansible playbook is run by terraform in the `vm-my-rides.tf` file, under `provisioner "local-exec"`.
 To run ansible separate from terraform, you will have to run
 ```sh
-ansible-playbook -u root -i "{ipv4_address}," --private-key ${PVT_KEY} -e "pub_key=${PUB_KEY}" docker-install.yml
+ansible-playbook -u root -i "{ipv4_address}," --private-key ${PVT_KEY} -e "pub_key=${PUB_KEY}" configure_droplet.yml
 ```
 `{ipv4_address}` should be replaced by the IPv4 address of the running droplet. Take note that the comma after the IP address has to remain present The other option is to add the IPv4 address to the inventory file and run
 ```sh
-ansible-playbook -u root -i inventory --private-key ${PVT_KEY} -e "pub_key=${PUB_KEY}" docker-install.yml
+ansible-playbook -u root -i inventory --private-key ${PVT_KEY} -e "pub_key=${PUB_KEY}" configure_droplet.yml
 ```
+Check what kind of information is available for the droplet setup with terraform
+```sh
+ansible all -u root -i inventory -m setup
+```
+To obtain a subset of the data, we use `filter` parameter and provide a pattern
+```sh
+ansible all -u root -i inventory -m setup -a "filter=*ipv4*"
+```
+
 
 
 ### SOURCES:
@@ -116,4 +129,6 @@ ansible-playbook -u root -i inventory --private-key ${PVT_KEY} -e "pub_key=${PUB
 [How to use ansible with terraform for configuration management](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-with-terraform-for-configuration-management)
 
 [How to use ansible to install and set up docker](https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04)
+
+[How to access system information facts in ansible playbooks](https://www.digitalocean.com/community/tutorials/how-to-access-system-information-facts-in-ansible-playbooks)
 

@@ -1,3 +1,7 @@
+locals {
+  connection_user = "root"
+}
+
 variable "do_token" {
   description = "Digital Ocean personal access token"
   sensitive = true
@@ -47,8 +51,8 @@ variable "droplet_size" {
   type = string
 }
 
-variable "connection_user" {
-  description = "User connecting to droplet"
-  default     = "root"
-  type = string
-}
+# variable "connection_user" {
+#   description = "User connecting to droplet"
+#   default     = "root"
+#   type = string
+# }

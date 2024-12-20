@@ -1,7 +1,35 @@
 #! /bin/bash
+export MINICONDA_URL=${MINICONDA_URL:-"https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"}
+export DOCKER_COMPOSE_URL=${DOCKER_COMPOSE_URL:-"https://github.com/docker/compose/releases/download/v2.32.1/docker-compose-darwin-x86_64"}
 export PVT_KEY="$HOME/.ssh/{pvt_key_name}"
 export PUB_KEY="$HOME/.ssh/{pub_key_name}"
 export DIGITALOCEAN_SSH_KEY="{name_of_ssh_key_used_in_digital_ocean}"
 export DO_PAT="{your_personal_access_token}"
 export TF_LOG="INFO"
 export ANSIBLE_HOST_KEY_CHECKING=False
+
+generate_checksum(){
+  # Parameters
+  #   $1: name of the action to which the checksum is generated e.g miniconda
+  #   $2: url to file download
+  #   $3: name of the file output after downloading
+  #   $4: name of the checksum added to the environment
+  echo "Generating checksum for $1"
+  CHECK_URL_REDIRECT="$(curl -sI $2 | grep "location")"
+  if [ -z "$CHECK_URL_REDIRECT" ]
+  then
+    curl -k $2 -o $3
+  else
+    curl -kL $2 -o $3
+  fi
+  export $4=`md5sum $3 | awk '{ print $1 }'`
+  rm $3
+}
+
+DOCKER_COMPOSE_FILE_NAME='docker-compose'
+MINICONDA_FILE_NAME='install-miniconda.sh'
+
+generate_checksum "docker-compose" "${DOCKER_COMPOSE_URL}" "${DOCKER_COMPOSE_FILE_NAME}" "DOCKER_COMPOSE_CHECKSUM"
+echo $DOCKER_COMPOSE_CHECKSUM
+generate_checksum "miniconda" "${MINICONDA_URL}" "${MINICONDA_FILE_NAME}" "MINICONDA_CHECKSUM"
+echo $MINICONDA_CHECKSUM

@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for docker_install
+container_count: 2
+default_container_name: docker
+default_container_command: sleep 1d
+default_container_image: ubuntu

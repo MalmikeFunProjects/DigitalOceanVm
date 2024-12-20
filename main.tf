@@ -12,7 +12,6 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-
 module "run_vm_my_rides" {
   source = "./modules/vm-my-rides"
   providers = {
@@ -26,8 +25,13 @@ module "run_vm_my_rides" {
 
 resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -i '${module.run_vm_my_rides.droplet_ip_address},' --private-key ${var.pvt_key} -e 'pub_key=${var.pub_key}' docker-install.yml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -i ${module.run_vm_my_rides.droplet_ip_address}, --private-key ${var.pvt_key} -e pub_key=${var.pub_key} configure_droplet.yml"
   }
+}
+
+output "droplet_ip_address" {
+  value = module.run_vm_my_rides.droplet_ip_address
+  sensitive = false # set to true if the logs will be publicly available
 }
 
 variable "do_token" {

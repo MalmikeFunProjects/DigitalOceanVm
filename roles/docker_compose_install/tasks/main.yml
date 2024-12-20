@@ -1,0 +1,48 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for docker_compose_install
+- name: Install docker-compose
+  block:
+    - name: Remove docker-compose from tmp if exists
+      file:
+        state: absent
+        path: /tmp/docker-compose
+
+    - name: Download docker_compose
+      get_url:
+        url: "{{ docker_compose_url }}"
+        dest: /tmp/docker-compose
+
+    - name: Get sha256 sum of docker-compose script
+      stat:
+        path: /tmp/docker-compose
+        checksum_algorithm: md5
+        get_checksum: yes
+      register: docker_compose_stat
+
+    - name: Verify md5sum of docker-compose script
+      fail:
+        msg: "Incorrect script downloaded for docker-compose. Verify the url by cross checking against https://github.com/docker/compose/releases"
+      register: checksum_check
+      when: 'docker_compose_stat.stat.checksum !=  docker_compose_checksum'
+
+    - name: Copy docker-compose to bin folder
+      copy: remote_src=True src=/tmp/docker-compose dest=/bin/docker-compose
+
+    - name: Give permissions to run docker-compose by all users
+      file:
+        dest: /bin/docker-compose
+        mode: 0750
+      register: docker_compose_exec
+      when: checksum_check is skipped
+
+    - name: Remove the docker-compose from tmp
+      file:
+        state: absent
+        path: /tmp/docker-compose
+
+    - name: Add docker-compose to path
+      become: true
+      shell: echo 'export PATH=/bin/docker-compose:$PATH' >> /etc/profile
+
+  when: check_docker_install is succeeded

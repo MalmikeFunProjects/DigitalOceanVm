@@ -1,0 +1,5 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for docker_compose_install
+docker_compose_checksum: "{{ lookup('env', 'DOCKER_COMPOSE_CHECKSUM') }}"
+docker_compose_url: "{{ lookup('env', 'DOCKER_COMPOSE_URL') }}"

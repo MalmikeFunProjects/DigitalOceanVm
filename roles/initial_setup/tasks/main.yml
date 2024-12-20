@@ -1,0 +1,57 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for initial setup
+- name: Initial setup
+  block:
+    - name: Print droplet IP address
+      debug:
+        msg: "IPv4 address: , user: {{ ansible_env.USER }}"
+
+    - name: Add the user '{{ super_user }}' and add it to 'sudo'
+      user:
+        name: "{{super_user}}"
+        group: sudo
+
+    - name: Add SSH key to '{{super_user}}'
+      authorized_key:
+        user:  "{{super_user}}"
+        state: present
+        key: "{{ lookup('file', pub_key) }}"
+
+    - name: Wait for apt to unlock
+      shell: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 5; done;
+
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    # - name: Install required system packages
+    #   apt:
+    #     pkg:
+    #       - apt-transport-https
+    #       - ca-certificates
+    #       - curl
+    #       - software-properties-common
+    #       - python3-pip
+    #       - virtualenv
+    #       - python3-setuptools
+    #       - zip
+    #     state: latest
+    #     update_cache: true
+
+    - name: Install required system packages with loop
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+          - zip
