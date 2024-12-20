@@ -3,3 +3,6 @@
 # vars file for anacoda
 miniconda_checksum: "{{ lookup('env', 'MINICONDA_CHECKSUM') }}"
 miniconda_url: "{{ lookup('env', 'MINICONDA_URL') }}"
+miniconda_temp_path: "/tmp/install-miniconda.sh"
+miniconda_dest_path: "/opt/miniconda3"
+

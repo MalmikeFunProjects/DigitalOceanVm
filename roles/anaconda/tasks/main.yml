@@ -6,42 +6,42 @@
     - name: Download Miniconda
       get_url:
         url: "{{ miniconda_url }}"
-        dest: /tmp/install-miniconda.sh
+        dest: "{{ miniconda_temp_path }}"
         checksum: md5:{{miniconda_checksum}}
         mode: 0550
 
     - name: Create conda folder
       become: true
       file:
-        path: /opt/miniconda3
+        path: "{{ miniconda_dest_path }}"
         state: directory
         owner: "{{ super_user }}"
         mode: 0755
         recurse: yes
 
     - name: Run the installer
-      shell: /tmp/install-miniconda.sh -b -u -p /opt/miniconda3
+      shell: "{{ miniconda_temp_path }} -b -u -p {{ miniconda_dest_path }}"
 
     - name: Remove the installer
       file:
         state: absent
-        path: /tmp/install-miniconda.sh
+        path: "{{ miniconda_temp_path }}"
 
     - name: Add miniconda bin to path
       become: true
-      shell: echo 'export PATH=/opt/miniconda3/bin:$PATH' >> /etc/profile
+      shell: echo 'export PATH={{ miniconda_dest_path }}/bin:$PATH' >> /etc/profile
 
     - name: conda - read permission for all
       become: true
       file:
-        path: /opt/miniconda3
+        path: "{{ miniconda_dest_path }}"
         mode: +r
         recurse: yes
 
     - name: conda - execution permission for all
       become: true
       file:
-        path: /opt/miniconda3/bin:$PATH'
+        path: "{{ miniconda_dest_path }}/bin:$PATH"
         mode: +x
         recurse: yes
 

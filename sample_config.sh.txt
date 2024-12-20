@@ -33,3 +33,6 @@ generate_checksum "docker-compose" "${DOCKER_COMPOSE_URL}" "${DOCKER_COMPOSE_FIL
 echo $DOCKER_COMPOSE_CHECKSUM
 generate_checksum "miniconda" "${MINICONDA_URL}" "${MINICONDA_FILE_NAME}" "MINICONDA_CHECKSUM"
 echo $MINICONDA_CHECKSUM
+
+export GCLOUD_ARCHIVE_NAME=${GCLOUD_ARCHIVE_NAME:-"google-cloud-cli-linux-x86_64.tar.gz"} # You can get the archive name based on the package found https://cloud.google.com/sdk/docs/downloads-versioned-archives
+export GCLOUD_ADDITIONAL_COMPONENTS="kubectl, alpha, beta, bq, core, gsutil, app-engine-python"

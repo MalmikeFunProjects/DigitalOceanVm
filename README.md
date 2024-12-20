@@ -1,3 +1,6 @@
+### Set up a virtual machine with terraform and ansible on digital ocean
+The project sets up a virtual machine with terraform and ansible on digital ocean. Terraform is used to create the droplet (virtual machine) and ansible for configuring the droplet. Docker, docker-compose, Miniconda (miniature installation of anaconda) and gcloud cli are installed onto the droplet. Follow the instructions below when setting it up. 
+
 ### Prerequisites
 
 - Digital ocean account, [sign up for a new account](https://cloud.digitalocean.com/registrations/new)

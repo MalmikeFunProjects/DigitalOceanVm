@@ -3,6 +3,10 @@
 # tasks file for google cloud install
 - name: Install google cloud
   block:
+  - name: Check values
+    debug:
+      msg: "{{ gcloud_archive_name }}: {{gcloud_additional_components }}"
+
   - name: Create temp intall path
     block:
       - name: Create a tmp path

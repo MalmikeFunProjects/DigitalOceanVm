@@ -7,8 +7,8 @@
     super_user: malmike
 
   roles:
-    - initial_setup
-    - docker_install
-    - docker_compose_install
+    # - initial_setup
+    # - docker_install
+    # - docker_compose_install
     - anaconda
-    - google_cloud_install
+    # - google_cloud_install
