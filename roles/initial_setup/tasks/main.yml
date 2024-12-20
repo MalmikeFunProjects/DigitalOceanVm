@@ -27,26 +27,12 @@
         state: latest
         update_cache: true
 
-    # - name: Install required system packages
-    #   apt:
-    #     pkg:
-    #       - apt-transport-https
-    #       - ca-certificates
-    #       - curl
-    #       - software-properties-common
-    #       - python3-pip
-    #       - virtualenv
-    #       - python3-setuptools
-    #       - zip
-    #     state: latest
-    #     update_cache: true
+    - name: Wait for apt to unlock
+      shell: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 5; done;
 
-    - name: Install required system packages with loop
+    - name: Install required system packages
       apt:
-        name: "{{ item }}"
-        state: latest
-        update_cache: yes
-      loop:
+        pkg:
           - apt-transport-https
           - ca-certificates
           - curl
@@ -55,3 +41,22 @@
           - virtualenv
           - python3-setuptools
           - zip
+          - tar
+        state: latest
+        update_cache: true
+
+    # - name: Install required system packages with loop
+    #   apt:
+    #     name: "{{ item }}"
+    #     state: latest
+    #     update_cache: yes
+    #   loop:
+    #       - apt-transport-https
+    #       - ca-certificates
+    #       - curl
+    #       - software-properties-common
+    #       - python3-pip
+    #       - virtualenv
+    #       - python3-setuptools
+    #       - zip
+    #       - tar

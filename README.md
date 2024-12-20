@@ -12,6 +12,10 @@
 cp sample_config.sh.txt config.sh && chmod +x $_ && chmod +x unset_config.sh
 ```
 - `unset_config` is used to unset the configurations after running terraform destroy
+- Install ansible roles
+```sh
+ansible-galaxy install -r requirements.yml
+```
 
 #### Update the following in config.sh
 - Set `{pvt_key_name}` to the name of the SSH private key

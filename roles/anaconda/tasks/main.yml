@@ -7,7 +7,7 @@
       get_url:
         url: "{{ miniconda_url }}"
         dest: /tmp/install-miniconda.sh
-        checksum: sha256:{{miniconda_checksum}}
+        checksum: md5:{{miniconda_checksum}}
         mode: 0550
 
     - name: Create conda folder

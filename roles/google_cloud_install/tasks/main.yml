@@ -1,0 +1,24 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for google cloud install
+- name: Install google cloud
+  block:
+  - name: Create temp intall path
+    block:
+      - name: Create a tmp path
+        file:
+          path: "{{ gcloud_tmp_path }}"
+          state: directory
+          owner: "{{ super_user }}"
+          mode: 0777
+
+  - name: Run the install
+    include_role:
+      name: ansible.install-gcloud
+
+  - name: Remove temp install path
+    block:
+      - name: Remove the tmp path
+        file:
+          path: "{{ gcloud_tmp_path }}"
+          state: absent

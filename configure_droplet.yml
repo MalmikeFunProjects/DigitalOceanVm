@@ -1,12 +1,14 @@
 - become: yes # by setting become to yes, ansible knows to run commands as superuser
   hosts: all
   name: Install docker
+  gather_facts: yes
   vars:
     do_task: no
     super_user: malmike
 
   roles:
-    # - initial_setup
-    # - docker_install
+    - initial_setup
+    - docker_install
     - docker_compose_install
-    # - anaconda
+    - anaconda
+    - google_cloud_install

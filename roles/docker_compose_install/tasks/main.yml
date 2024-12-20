@@ -3,19 +3,15 @@
 # tasks file for docker_compose_install
 - name: Install docker-compose
   block:
-    - name: Remove docker-compose from tmp if exists
-      file:
-        state: absent
-        path: /tmp/docker-compose
-
     - name: Download docker_compose
       get_url:
         url: "{{ docker_compose_url }}"
-        dest: /tmp/docker-compose
+        dest: "{{ docker_compose_temp_path }}"
+        force: true # always download docker-compose, even if it already exists in the temp path.
 
     - name: Get sha256 sum of docker-compose script
       stat:
-        path: /tmp/docker-compose
+        path: "{{ docker_compose_temp_path }}"
         checksum_algorithm: md5
         get_checksum: yes
       register: docker_compose_stat
@@ -27,11 +23,11 @@
       when: 'docker_compose_stat.stat.checksum !=  docker_compose_checksum'
 
     - name: Copy docker-compose to bin folder
-      copy: remote_src=True src=/tmp/docker-compose dest=/bin/docker-compose
+      copy: remote_src=True src="{{ docker_compose_temp_path }}" dest="{{ docker_compose_dest_path }}"
 
     - name: Give permissions to run docker-compose by all users
       file:
-        dest: /bin/docker-compose
+        dest: "{{ docker_compose_dest_path }}"
         mode: 0750
       register: docker_compose_exec
       when: checksum_check is skipped
@@ -39,10 +35,10 @@
     - name: Remove the docker-compose from tmp
       file:
         state: absent
-        path: /tmp/docker-compose
+        path: "{{ docker_compose_temp_path }}"
 
-    - name: Add docker-compose to path
-      become: true
-      shell: echo 'export PATH=/bin/docker-compose:$PATH' >> /etc/profile
+    # - name: Add docker-compose to path
+    #   become: true
+    #   shell: echo 'export PATH="{{ docker_compose_dest_path }}":$PATH' >> /etc/profile
 
   when: check_docker_install is succeeded

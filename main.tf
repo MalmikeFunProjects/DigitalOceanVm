@@ -23,6 +23,11 @@ module "run_vm_my_rides" {
   do_ssh_key_name = var.do_ssh_key_name
 }
 
+resource "local_file" "droplet_ip_address" {
+    content  = module.run_vm_my_rides.droplet_ip_address
+    filename = "inventory"
+}
+
 resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
     command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -i ${module.run_vm_my_rides.droplet_ip_address}, --private-key ${var.pvt_key} -e pub_key=${var.pub_key} configure_droplet.yml"
