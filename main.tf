@@ -21,6 +21,10 @@ module "run_vm_my_rides" {
   pvt_key = var.pvt_key
   pub_key = var.pub_key
   do_ssh_key_name = var.do_ssh_key_name
+  ubuntu_image = var.ubuntu_image
+  droplet_name = var.droplet_name
+  deployment_region = var.deployment_region
+  droplet_size = var.droplet_size
 }
 
 resource "local_file" "droplet_ip_address" {
@@ -62,3 +66,29 @@ variable "do_ssh_key_name" {
   sensitive = false
   type = string
 }
+
+variable "ubuntu_image" {
+  description = "Version of ubuntu to be installed"
+  default     = "ubuntu-24-10-x64"
+  type = string
+}
+
+variable "droplet_name" {
+  description = "Name of droplet"
+  default     = "vm-my-rides"
+  sensitive = false
+  type = string
+}
+
+variable "deployment_region" {
+  description = "Region the droplet is to be created"
+  default     = "fra1"
+  type = string
+}
+
+variable "droplet_size" {
+  description = "Size (Compute specifications) of the droplet"
+  default     = "s-4vcpu-8gb"
+  type = string
+}
+
