@@ -62,7 +62,8 @@ terraform plan \
   -var "do_token=${DO_PAT}" \
   -var "pvt_key=${PVT_KEY}" \
   -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}"
+  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
+  -var "droplet_size=${DROPLET_SIZE}"
 ```
 
 - Run `terraform apply` to execute the current plan
@@ -71,7 +72,8 @@ terraform apply \
   -var "do_token=${DO_PAT}" \
   -var "pvt_key=${PVT_KEY}" \
   -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}"
+  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
+  -var "droplet_size=${DROPLET_SIZE}"
 ```
 
 - To view current state of the environment. `ipv4_address` will show the public IP address of the Droplet
@@ -90,7 +92,8 @@ terraform refresh \
   -var "do_token=${DO_PAT}" \
   -var "pvt_key=${PVT_KEY}" \
   -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}"
+  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
+  -var "droplet_size=${DROPLET_SIZE}"
 ```
 
 Run `terraform destroy` to destroy the created resources
@@ -99,7 +102,8 @@ terraform destroy \
   -var "do_token=${DO_PAT}" \
   -var "pvt_key=${PVT_KEY}" \
   -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}"
+  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
+  -var "droplet_size=${DROPLET_SIZE}"
 ```
 
 Unset configurations
