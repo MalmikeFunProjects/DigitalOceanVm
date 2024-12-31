@@ -34,6 +34,7 @@ resource "local_file" "droplet_ip_address" {
 
 resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
+    # command = "ANSIBLE_HOST_KEY_CHECKING=False ansible all -i ${local_file.droplet_ip_address.filename} -u root -m apt -a 'upgrade=yes update_cache=yes cache_valid_time=86400' --private-key ${var.pvt_key} --become;"
     command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -i ${module.run_vm_my_rides.droplet_ip_address}, --private-key ${var.pvt_key} -e pub_key=${var.pub_key} configure_droplet.yml"
   }
 }
