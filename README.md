@@ -8,12 +8,20 @@ The project sets up a virtual machine with terraform and ansible on digital ocea
 - Create an SSH key [how to create an ssh key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) (`NOTE`: Ensure to add the SSH private key to the ssh agent using `ssh-add --apple-use-keychain ~/.ssh/id_ed25519` where id_ed25519 is the key name)
 - SSH key added to your digital ocean account [how to manage ssh public keys](https://docs.digitalocean.com/platform/teams/upload-ssh-keys/) (NOTE: The name of the key is used when referencing the digitalocean_ssh_key)
 - Installation of terraform, [install terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- `Optional`: Installation of the [digital ocean CLI (doctl)](https://docs.digitalocean.com/reference/doctl/how-to/install/)
 
 ### Set default configurations
 - Generate a config file from sample config
 ```sh
 cp sample_config.sh.txt config.sh && chmod +x $_ && chmod +x unset_config.sh
 ```
+
+- The config.sh file includes variables prefixed with TF_VAR_. Terraform can automatically recognize and import these environment variables as Terraform variables. Any environment variable starting with TF_VAR_ is mapped directly to a corresponding Terraform variable with the same name e.g `TF_VAR_pvt_key` will map to `pvt_key` in the `main.tf` file
+
+- The config.sh file also creates txt files containing the allowed provision arguments for a digital ocean droplet. It require `doctl` to run generate these files. If `doctl` does not exist, terraform will use the existing `txt` files uploaded in the `assets` folder
+
+- The script `run_terraform.sh` can be used to create the droplet using `terraform apply` and then destroy the resource using `terraform destroy` after 1 hour
+
 - `unset_config` is used to unset the configurations after running terraform destroy
 - Install ansible roles
 ```sh
@@ -51,29 +59,19 @@ terraform init
 terraform providers
 ```
 
-- Update the size of droplet in the file `vm-my-rides.tf` based on the [digital ocean size slug chart](https://slugs.do-api.dev/). Currently set as `s-4vcpu-8gb` which is the Basic Regular (Disk type: SSD, 8GB memory, 4 CPUs, 160GB SSD Disk, 5TB transfer at $0.071/hour or $48/ month at the time of creating this project)
+- Update the size of droplet in the file `vm-my-rides.tf` based on the [digital ocean size slug chart](https://slugs.do-api.dev/). Currently set to the lowest size but for data engineering tasks I recommend `s-4vcpu-8gb` which is the Basic Regular (Disk type: SSD, 8GB memory, 4 CPUs, 160GB SSD Disk, 5TB transfer at $0.071/hour or $48/ month at the time of creating this project)
 
 NOTE: To know which argurments are required or optional for a Droplet resource, refer to the official Terraform documentation: [Digital Ocean Droplet Specification](http://www.terraform.io/docs/providers/do/r/droplet)
 
 #### Create the droplet
-- See the execution plan (what terraform will attempt to build) by runing `terraform plan`. Have to specify the values for Digital Ocean Access Token (`DO_PAT`) and the path to your private key (`pvt_key`). The private key is used for accessing the droplet to install other dependencies e.g Nginx
+- See the execution plan (what terraform will attempt to build) by runing `terraform plan`. Have to specify the values for Digital Ocean Access Token (`TF_VAR_do_token`) and the path to your private key (`TF_VAR_pvt_key`) in `config.sh`. The private key is used for accessing the droplet to install other dependencies e.g docker using ansible
 ```sh
-terraform plan \
-  -var "do_token=${DO_PAT}" \
-  -var "pvt_key=${PVT_KEY}" \
-  -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
-  -var "droplet_size=${DROPLET_SIZE}"
+terraform plan
 ```
 
 - Run `terraform apply` to execute the current plan
 ```sh
-terraform apply \
-  -var "do_token=${DO_PAT}" \
-  -var "pvt_key=${PVT_KEY}" \
-  -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
-  -var "droplet_size=${DROPLET_SIZE}"
+terraform apply
 ```
 
 - To view current state of the environment. `ipv4_address` will show the public IP address of the Droplet
@@ -88,22 +86,12 @@ terraform output
 
 Note: If you modify your infrastructure outside of Terraform, your state file will be out of date. If your resources are modified outside of Terraform, you’ll need to refresh the state file to bring it up to date. This command will pull the updated resource information from your provider(s):
 ```sh
-terraform refresh \
-  -var "do_token=${DO_PAT}" \
-  -var "pvt_key=${PVT_KEY}" \
-  -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
-  -var "droplet_size=${DROPLET_SIZE}"
+terraform refresh
 ```
 
 Run `terraform destroy` to destroy the created resources
 ```sh
-terraform destroy \
-  -var "do_token=${DO_PAT}" \
-  -var "pvt_key=${PVT_KEY}" \
-  -var "pub_key=${PUB_KEY}" \
-  -var "do_ssh_key_name=${DIGITALOCEAN_SSH_KEY}" \
-  -var "droplet_size=${DROPLET_SIZE}"
+terraform destroy
 ```
 
 Unset configurations
