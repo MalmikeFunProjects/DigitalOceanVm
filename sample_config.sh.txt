@@ -1,13 +1,22 @@
 #! /bin/bash
 export MINICONDA_URL=${MINICONDA_URL:-"https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"}
 export DOCKER_COMPOSE_URL=${DOCKER_COMPOSE_URL:-"https://github.com/docker/compose/releases/download/v2.32.1/docker-compose-darwin-x86_64"}
-export DROPLET_SIZE=${DROPLET_SIZE:-"s-1vcpu-512mb-10gb"} # You can select a droplet size from https://slugs.do-api.dev/
-export PVT_KEY="$HOME/.ssh/{pvt_key_name}"
-export PUB_KEY="$HOME/.ssh/{pub_key_name}"
-export DIGITALOCEAN_SSH_KEY="{name_of_ssh_key_used_in_digital_ocean}"
-export DO_PAT="{your_personal_access_token}"
+export TF_VAR_droplet_size=${TF_VAR_droplet_size:-"s-1vcpu-512mb-10gb"} # You can select a droplet size from https://slugs.do-api.dev/
+export TF_VAR_deployment_region="fra1"
+export TF_VAR_ubuntu_image="ubuntu-24-10-x64"
+export TF_VAR_pvt_key="$HOME/.ssh/{pvt_key_name}"
+export TF_VAR_pub_key="$HOME/.ssh/{pub_key_name}"
+export TF_VAR_do_ssh_key_name="{name_of_ssh_key_used_in_digital_ocean}"
+export TF_VAR_do_token="{your_personal_access_token}"
+export TF_VAR_environment="dev" # must be one of dev, staging, prod
 export TF_LOG="INFO"
 export ANSIBLE_HOST_KEY_CHECKING=False
+
+# Check if required variables are set
+if [ -z "$TF_VAR_do_token" ]; then
+  echo "Error: TF_VAR_do_token environment variable is not set!"
+  exit 1
+fi
 
 generate_checksum(){
   # Parameters
@@ -37,3 +46,26 @@ echo $MINICONDA_CHECKSUM
 
 export GCLOUD_ARCHIVE_NAME=${GCLOUD_ARCHIVE_NAME:-"google-cloud-cli-linux-x86_64.tar.gz"} # You can get the archive name based on the package found https://cloud.google.com/sdk/docs/downloads-versioned-archives
 export GCLOUD_ADDITIONAL_COMPONENTS="kubectl, alpha, beta, bq, core, gsutil, app-engine-python"
+
+get_current_directory(){
+  # Get the absolute path of the current working directory
+  current_directory=$(pwd)
+  # Extract the base directory name from the current directory
+  base_directory="$(basename $current_directory)"
+}
+
+# Get default values for digital ocean distribution, deployment regions and droplet size
+if command -v doctl &> /dev/null; then
+  # Create assets folder if it does not exist
+  get_current_directory
+  if [[ "${base_directory}" == "DigitalOceanVM" ]]; then
+    if [[ ! -d "assets" ]]; then
+      mkdir assets
+    fi
+
+    # add default values as txt files to asset folder (values will be over written if they exist)
+    doctl compute size list --format Slug > ./assets/allowed_sizes.txt
+    doctl compute region list --format Slug > ./assets/allowed_regions.txt
+    doctl compute image list-distribution --format Slug > ./assets/allowed_distributions.txt
+  fi
+fi

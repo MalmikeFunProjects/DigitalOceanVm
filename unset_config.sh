@@ -1,8 +1,9 @@
 #! /bin/bash
-unset PVT_KEY
-unset DIGITALOCEAN_SSH_KEY
-unset DROPLET_SIZE
-unset DO_PAT
+unset TF_VAR_droplet_size
+unset TF_VAR_pvt_key
+unset TF_VAR_pub_key
+unset TF_VAR_do_ssh_key_name
+unset TF_VAR_do_token
 unset TF_LOG
 unset ANSIBLE_HOST_KEY_CHECKING
 unset MINICONDA_URL
